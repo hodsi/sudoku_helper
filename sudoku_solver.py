@@ -143,6 +143,24 @@ class SudokuSolver(object):
                         pass
         return False
 
+    def get_solutions(self):
+        if self.try_solve():
+            yield str(self)
+            return
+        for i, raw in enumerate(self.sudoku_board):
+            for j, cell in enumerate(raw):
+                if cell:
+                    continue
+                for option in self.sudoku_board.get_cell_options(i, j):
+                    temp_solver = deepcopy(self)
+                    temp_solver.sudoku_board[i, j] = option
+                    try:
+                        for solution in temp_solver.get_solutions():
+                            yield solution
+                    except SudokuError:
+                        pass
+                return
+
     def __str__(self):
         output = ''
         for i, raw in enumerate(self.sudoku_board):
