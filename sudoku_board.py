@@ -1,6 +1,8 @@
 from copy import deepcopy
 from typing import List, Tuple, Optional
 
+from exceptions import NoSuchOption
+
 
 class SudokuBoard(object):
     def __init__(
@@ -67,7 +69,7 @@ class SudokuBoard(object):
     def __setitem__(self, key, value):
         raw, column = key
         if value not in self._options_table[raw][column]:
-            raise ValueError('the value must be in the options')
+            raise NoSuchOption()
         for option in self._options_table[raw][column]:
             if option != value:
                 self.mark_option(raw, column, option)
