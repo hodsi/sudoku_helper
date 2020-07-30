@@ -5,6 +5,18 @@ from sudoku_board import SudokuBoard
 BASIC_SIZE = 3
 
 
+def deep_compare(a, b):
+    if type(a) != type(b):
+        return False
+    if type(a) != list:
+        return a == b
+    if len(a) != len(b):
+        return False
+    for i, j in zip(a, b):
+        if not deep_compare(i, j):
+            return False
+    return True
+
 class SudokuSolver(object):
     def __init__(
             self, board_size: int = BASIC_SIZE, *,
@@ -82,3 +94,22 @@ class SudokuSolver(object):
                 if not cell:
                     continue
                 self._mark_cell_relatives(cell_raw, cell_column, cell)
+
+    def is_solved(self):
+        return all(
+            self.sudoku_board[i, j] for i in range(self.sudoku_board.size) for j in range(self.sudoku_board.size)
+        )
+
+    def try_solve(self):
+        current_table = [*self.sudoku_board]
+        current_options = self.sudoku_board.options_table
+        while not self.is_solved():
+            self.mark_bad_options()
+            self.fill_solved_options()
+            temp_table = [*self.sudoku_board]
+            temp_options = self.sudoku_board.options_table
+            if deep_compare(current_table, temp_table) and deep_compare(current_options, temp_options):
+                return False
+            current_table = temp_table
+            current_options = temp_options
+        return True
