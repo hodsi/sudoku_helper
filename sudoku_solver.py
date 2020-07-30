@@ -142,3 +142,13 @@ class SudokuSolver(object):
                     except SudokuError:
                         pass
         return False
+
+    def __str__(self):
+        output = ''
+        for i, raw in enumerate(self.sudoku_board):
+            for j in range(0, self.sudoku_board.size ** 2, self.sudoku_board.size):
+                output += ''.join(raw[j:j + self.sudoku_board.size]) + self.sudoku_board.fill
+            output += '\n'
+            if not (i + 1) % self.sudoku_board.size:
+                output += '\n'
+        return output
