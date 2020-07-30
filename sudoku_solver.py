@@ -1,5 +1,7 @@
+from copy import deepcopy
 from typing import List, Optional
 
+from exceptions import NoOptionsException, SudokuError
 from sudoku_board import SudokuBoard
 
 BASIC_SIZE = 3
@@ -17,12 +19,15 @@ def deep_compare(a, b):
             return False
     return True
 
+
 class SudokuSolver(object):
     def __init__(
             self, board_size: int = BASIC_SIZE, *,
             initiate_state: List[List[Optional[str]]] = None, option_fill: str = ' ', fill: str = ' '
     ):
-        self.sudoku_board = SudokuBoard(board_size, initiate_state=initiate_state, option_fill=option_fill, fill=fill)
+        self.sudoku_board: SudokuBoard = SudokuBoard(
+            board_size, initiate_state=initiate_state, option_fill=option_fill, fill=fill
+        )
 
     def _fill_only_option(self):
         for i, options_raw in enumerate(self.sudoku_board.options_table):
@@ -97,7 +102,8 @@ class SudokuSolver(object):
 
     def is_solved(self):
         return all(
-            self.sudoku_board[i, j] for i in range(self.sudoku_board.size) for j in range(self.sudoku_board.size)
+            self.sudoku_board[i, j]
+            for i in range(self.sudoku_board.size ** 2) for j in range(self.sudoku_board.size ** 2)
         )
 
     def try_solve(self):
@@ -108,8 +114,31 @@ class SudokuSolver(object):
             self.fill_solved_options()
             temp_table = [*self.sudoku_board]
             temp_options = self.sudoku_board.options_table
+            if any(
+                    not self.sudoku_board.get_cell_options(i, j)
+                    for i in range(self.sudoku_board.size ** 2) for j in range(self.sudoku_board.size ** 2)
+            ):
+                raise NoOptionsException()
             if deep_compare(current_table, temp_table) and deep_compare(current_options, temp_options):
                 return False
             current_table = temp_table
             current_options = temp_options
         return True
+
+    def solve(self):
+        if self.try_solve():
+            return True
+        for i, raw in enumerate(self.sudoku_board):
+            for j, cell in enumerate(raw):
+                if cell:
+                    continue
+                for option in self.sudoku_board.get_cell_options(i, j):
+                    temp_solver = deepcopy(self)
+                    temp_solver.sudoku_board[i, j] = option
+                    try:
+                        if temp_solver.solve():
+                            self.sudoku_board = temp_solver.sudoku_board
+                            return True
+                    except SudokuError:
+                        pass
+        return False
