@@ -27,7 +27,7 @@ class SudokuBoard(object):
                 )
 
     def _get_all_available_options(self):
-        return (string.digits + string.ascii_uppercase)[1: self.size ** 2 + 1]
+        return [*(string.digits + string.ascii_uppercase)[1: self.size ** 2 + 1]]
 
     def _generate_options_table(self):
         return [[self._get_all_available_options() for _ in range(self.size ** 2)] for _ in range(self.size ** 2)]
