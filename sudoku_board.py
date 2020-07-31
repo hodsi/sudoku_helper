@@ -1,3 +1,4 @@
+import string
 from copy import deepcopy
 from typing import List, Tuple, Optional
 
@@ -13,9 +14,7 @@ class SudokuBoard(object):
         self.fill = fill
         self.size = size
         self._table = [[None] * self.size ** 2 for _ in range(self.size ** 2)]
-        self._options_table = [[
-            [str(i + 1) for i in range(self.size ** 2)] for _ in range(self.size ** 2)
-        ] for _ in range(self.size ** 2)]
+        self._options_table = self._generate_options_table()
         if initiate_state is not None:
             if len(initiate_state) == self.size ** 2 and all(len(i) == self.size ** 2 for i in initiate_state):
                 for i, raw in enumerate(initiate_state):
@@ -26,6 +25,12 @@ class SudokuBoard(object):
                 raise Exception(
                     f'{SudokuBoard.__name__} initiate_state should be the size: {self.size ** 2} × {self.size ** 2}'
                 )
+
+    def _get_all_available_options(self):
+        return (string.digits + string.ascii_uppercase)[1: self.size ** 2 + 1]
+
+    def _generate_options_table(self):
+        return [[self._get_all_available_options() for _ in range(self.size ** 2)] for _ in range(self.size ** 2)]
 
     @property
     def options_table(self):
