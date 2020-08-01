@@ -20,7 +20,7 @@ class SudokuGenerator(SudokuSolver):
                     temp_solver = deepcopy(self)
                     temp_solver.sudoku_board[i, j] = option
                     try:
-                        if temp_solver.generate_random_sudoku(shuffle):
+                        if temp_solver.generate_random_sudoku(shuffle=shuffle):
                             self.sudoku_board = temp_solver.sudoku_board
                             return True
                     except SudokuError:
