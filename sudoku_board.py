@@ -8,7 +8,7 @@ from exceptions import NoSuchOption
 class SudokuBoard(object):
     def __init__(
             self, size: int, *,
-            initiate_state: List[List[Optional[str]]] = None, option_fill: str = ' ', fill: str = '   '
+            initiate_state: List[List[Optional[str]]] = None, option_fill: str = '·', fill: str = '   '
     ):
         self.option_fill = option_fill
         self.fill = fill
