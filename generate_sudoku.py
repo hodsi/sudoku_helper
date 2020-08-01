@@ -10,7 +10,7 @@ def main():
     else:
         board_size = BASIC_SIZE
     sudoku_generator = SudokuGenerator(board_size)
-    sudoku_generator.generate_random_sudoku()
+    sudoku_generator.generate_random_minimal_sudoku()
     print(sudoku_generator)
 
 

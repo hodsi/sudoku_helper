@@ -73,6 +73,10 @@ class SudokuBoard(object):
 
     def __setitem__(self, key, value):
         row, column = key
+        if value is None:
+            self._options_table[row][column] = self._get_all_available_options()
+            self._table[row][column] = None
+            return
         if value not in self._options_table[row][column]:
             raise NoSuchOption()
         for option in self._options_table[row][column]:
