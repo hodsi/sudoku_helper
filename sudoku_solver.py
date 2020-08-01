@@ -109,8 +109,8 @@ class SudokuSolver(object):
         current_table = [*self.sudoku_board]
         current_options = self.sudoku_board.options_table
         while not self.is_solved():
-            self.mark_bad_options()
             self.fill_solved_options()
+            self.mark_bad_options()
             temp_table = [*self.sudoku_board]
             temp_options = self.sudoku_board.options_table
             if any(
