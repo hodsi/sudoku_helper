@@ -81,4 +81,4 @@ class SudokuBoard(object):
         self._table[raw][column] = value
 
     def __iter__(self):
-        return self._table.__iter__()
+        return deepcopy(self._table).__iter__()
