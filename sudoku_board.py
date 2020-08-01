@@ -8,7 +8,7 @@ from exceptions import NoSuchOption
 class SudokuBoard(object):
     def __init__(
             self, size: int, *,
-            initiate_state: List[List[Optional[str]]] = None, option_fill: str = ' ', fill: str = ' '
+            initiate_state: List[List[Optional[str]]] = None, option_fill: str = ' ', fill: str = '   '
     ):
         self.option_fill = option_fill
         self.fill = fill
@@ -50,10 +50,10 @@ class SudokuBoard(object):
                     for k, option in enumerate(self._options_table[i][j]):
                         raw_offset = k // self.size
                         column_offset = k % self.size
-                        output[output_raw + raw_offset][output_column + column_offset] = option or self.fill
+                        output[output_raw + raw_offset][output_column + column_offset] = option or self.option_fill
 
     def get_cell_options(self, raw: int, column: int) -> List[str]:
-        return [option for option in self._options_table[raw][column] if option != self.fill]
+        return [option for option in self._options_table[raw][column] if option != self.option_fill]
 
     def mark_option(self, raw: int, column: int, option: str):
         if option not in self._options_table[raw][column]:

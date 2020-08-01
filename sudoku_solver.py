@@ -23,7 +23,7 @@ def deep_compare(a, b) -> bool:
 class SudokuSolver(object):
     def __init__(
             self, board_size: int = BASIC_SIZE, *,
-            initiate_state: List[List[Optional[str]]] = None, option_fill: str = ' ', fill: str = ' '
+            initiate_state: List[List[Optional[str]]] = None, option_fill: str = ' ', fill: str = '   '
     ):
         self.sudoku_board: SudokuBoard = SudokuBoard(
             board_size, initiate_state=initiate_state, option_fill=option_fill, fill=fill
@@ -164,7 +164,7 @@ class SudokuSolver(object):
         output = ''
         for i, raw in enumerate(self.sudoku_board):
             for j in range(0, self.sudoku_board.size ** 2, self.sudoku_board.size):
-                output += ''.join(raw[j:j + self.sudoku_board.size]) + self.sudoku_board.fill
+                output += ' '.join(raw[j:j + self.sudoku_board.size]) + self.sudoku_board.fill
             output += '\n'
             if not (i + 1) % self.sudoku_board.size:
                 output += '\n'
