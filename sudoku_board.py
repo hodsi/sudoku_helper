@@ -56,7 +56,7 @@ class SudokuBoard(object):
         return [option for option in self._options_table[raw][column] if option != self.fill]
 
     def mark_option(self, raw: int, column: int, option: str):
-        if option not in self._options_table[raw][column] or self._table[raw][column]:
+        if option not in self._options_table[raw][column]:
             return
         option_index = self._options_table[raw][column].index(option)
         self._options_table[raw][column][option_index] = self.option_fill
