@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import List, Optional
+from typing import List, Optional, Tuple, Dict, Iterator
 
 from exceptions import NoOptionsException, SudokuError
 from sudoku_board import SudokuBoard
@@ -7,7 +7,7 @@ from sudoku_board import SudokuBoard
 BASIC_SIZE = 3
 
 
-def deep_compare(a, b):
+def deep_compare(a, b) -> bool:
     if type(a) != type(b):
         return False
     if type(a) != list:
@@ -38,7 +38,7 @@ class SudokuSolver(object):
                 if cell_options == 1:
                     self.sudoku_board[i, j] = cell_options[0]
 
-    def _get_only_options_indexes(self, options_indexes):
+    def _get_only_options_indexes(self, options_indexes: List[Tuple[int, int]]) -> Dict[str, Tuple[int, int]]:
         only_option_indexes = {}
         for options_index in options_indexes:
             cell_options = self.sudoku_board.get_cell_options(*options_index)
@@ -77,7 +77,7 @@ class SudokuSolver(object):
         self._fill_raw_options()
         self._fill_column_options()
 
-    def _mark_cell_relatives(self, raw, column, value):
+    def _mark_cell_relatives(self, raw: int, column: int, value: str):
         for i in range(self.sudoku_board.size ** 2):
             if i != raw:
                 self.sudoku_board.mark_option(i, column, value)
@@ -90,23 +90,22 @@ class SudokuSolver(object):
             for j in range(self.sudoku_board.size):
                 options_raw = block_raw + i
                 options_column = block_column + j
-                if not (options_raw, options_column) == (raw, column):
+                if (options_raw, options_column) != (raw, column):
                     self.sudoku_board.mark_option(options_raw, options_column, value)
 
     def mark_bad_options(self):
         for cell_raw, raw in enumerate(self.sudoku_board):
             for cell_column, cell in enumerate(raw):
-                if not cell:
-                    continue
-                self._mark_cell_relatives(cell_raw, cell_column, cell)
+                if cell:
+                    self._mark_cell_relatives(cell_raw, cell_column, cell)
 
-    def is_solved(self):
+    def is_solved(self) -> bool:
         return all(
             self.sudoku_board[i, j]
             for i in range(self.sudoku_board.size ** 2) for j in range(self.sudoku_board.size ** 2)
         )
 
-    def try_solve(self):
+    def try_solve(self) -> bool:
         current_table = [*self.sudoku_board]
         current_options = self.sudoku_board.options_table
         while not self.is_solved():
@@ -125,7 +124,7 @@ class SudokuSolver(object):
             current_options = temp_options
         return True
 
-    def solve(self):
+    def solve(self) -> bool:
         if self.try_solve():
             return True
         for i, raw in enumerate(self.sudoku_board):
@@ -143,7 +142,7 @@ class SudokuSolver(object):
                         pass
         return False
 
-    def get_solutions(self):
+    def get_solutions(self) -> Iterator[str]:
         if self.try_solve():
             yield str(self)
             return

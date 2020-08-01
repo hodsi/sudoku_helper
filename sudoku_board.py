@@ -26,14 +26,14 @@ class SudokuBoard(object):
                     f'{SudokuBoard.__name__} initiate_state should be the size: {self.size ** 2} × {self.size ** 2}'
                 )
 
-    def _get_all_available_options(self):
+    def _get_all_available_options(self) -> List[str]:
         return [*(string.digits + string.ascii_uppercase)[1: self.size ** 2 + 1]]
 
-    def _generate_options_table(self):
+    def _generate_options_table(self) -> List[List[List[str]]]:
         return [[self._get_all_available_options() for _ in range(self.size ** 2)] for _ in range(self.size ** 2)]
 
     @property
-    def options_table(self):
+    def options_table(self) -> List[List[List[str]]]:
         return deepcopy(self._options_table)
 
     def calc_place(self, raw: int, column: int) -> Tuple[int, int]:
@@ -52,7 +52,7 @@ class SudokuBoard(object):
                         column_offset = k % self.size
                         output[output_raw + raw_offset][output_column + column_offset] = option or self.fill
 
-    def get_cell_options(self, raw: int, column: int):
+    def get_cell_options(self, raw: int, column: int) -> List[str]:
         return [option for option in self._options_table[raw][column] if option != self.fill]
 
     def mark_option(self, raw: int, column: int, option: str):
@@ -67,7 +67,7 @@ class SudokuBoard(object):
         self.fill_output(output)
         return '\n'.join(''.join(raw) for raw in output)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> Optional[str]:
         raw, column = key
         return self._table[raw][column]
 
