@@ -10,8 +10,8 @@ class SudokuGenerator(SudokuSolver):
     def generate_random_sudoku(self, *, shuffle: Callable[[List[str]], None] = random.shuffle) -> bool:
         if self.try_solve():
             return True
-        for i, raw in enumerate(self.sudoku_board):
-            for j, cell in enumerate(raw):
+        for i, row in enumerate(self.sudoku_board):
+            for j, cell in enumerate(row):
                 if cell:
                     continue
                 cell_options = self.sudoku_board.get_cell_options(i, j)

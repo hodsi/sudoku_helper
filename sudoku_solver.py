@@ -30,8 +30,8 @@ class SudokuSolver(object):
         )
 
     def _fill_only_option(self):
-        for i, options_raw in enumerate(self.sudoku_board.options_table):
-            for j in range(len(options_raw)):
+        for i, options_row in enumerate(self.sudoku_board.options_table):
+            for j in range(len(options_row)):
                 if self.sudoku_board[i, j]:
                     continue
                 cell_options = self.sudoku_board.get_cell_options(i, j)
@@ -50,10 +50,10 @@ class SudokuSolver(object):
         return {key: value for key, value in only_option_indexes.items() if value and not self.sudoku_board[value]}
 
     def _fill_block_options(self):
-        for raw in range(0, self.sudoku_board.size ** 2, self.sudoku_board.size):
+        for row in range(0, self.sudoku_board.size ** 2, self.sudoku_board.size):
             for column in range(0, self.sudoku_board.size ** 2, self.sudoku_board.size):
                 options_indexes = [
-                    (raw + i, column + j)
+                    (row + i, column + j)
                     for i in range(self.sudoku_board.size) for j in range(self.sudoku_board.size)
                 ]
                 for option, option_index in self._get_only_options_indexes(options_indexes).items():
@@ -65,7 +65,7 @@ class SudokuSolver(object):
             for option, option_index in self._get_only_options_indexes(options_indexes).items():
                 self.sudoku_board[option_index] = option
 
-    def _fill_raw_options(self):
+    def _fill_row_options(self):
         for i in range(self.sudoku_board.size ** 2):
             options_indexes = [(i, j) for j in range(self.sudoku_board.size ** 2)]
             for option, option_index in self._get_only_options_indexes(options_indexes).items():
@@ -74,30 +74,30 @@ class SudokuSolver(object):
     def fill_solved_options(self):
         self._fill_only_option()
         self._fill_block_options()
-        self._fill_raw_options()
+        self._fill_row_options()
         self._fill_column_options()
 
-    def _mark_cell_relatives(self, raw: int, column: int, value: str):
+    def _mark_cell_relatives(self, row: int, column: int, value: str):
         for i in range(self.sudoku_board.size ** 2):
-            if i != raw:
+            if i != row:
                 self.sudoku_board.mark_option(i, column, value)
         for j in range(self.sudoku_board.size ** 2):
             if j != column:
-                self.sudoku_board.mark_option(raw, j, value)
-        block_raw = raw - raw % self.sudoku_board.size
+                self.sudoku_board.mark_option(row, j, value)
+        block_row = row - row % self.sudoku_board.size
         block_column = column - column % self.sudoku_board.size
         for i in range(self.sudoku_board.size):
             for j in range(self.sudoku_board.size):
-                options_raw = block_raw + i
+                options_row = block_row + i
                 options_column = block_column + j
-                if (options_raw, options_column) != (raw, column):
-                    self.sudoku_board.mark_option(options_raw, options_column, value)
+                if (options_row, options_column) != (row, column):
+                    self.sudoku_board.mark_option(options_row, options_column, value)
 
     def mark_bad_options(self):
-        for cell_raw, raw in enumerate(self.sudoku_board):
-            for cell_column, cell in enumerate(raw):
+        for row_number, row in enumerate(self.sudoku_board):
+            for cell_column, cell in enumerate(row):
                 if cell:
-                    self._mark_cell_relatives(cell_raw, cell_column, cell)
+                    self._mark_cell_relatives(row_number, cell_column, cell)
 
     def is_solved(self) -> bool:
         return all(
@@ -127,8 +127,8 @@ class SudokuSolver(object):
     def solve(self) -> bool:
         if self.try_solve():
             return True
-        for i, raw in enumerate(self.sudoku_board):
-            for j, cell in enumerate(raw):
+        for i, row in enumerate(self.sudoku_board):
+            for j, cell in enumerate(row):
                 if cell:
                     continue
                 for option in self.sudoku_board.get_cell_options(i, j):
@@ -146,8 +146,8 @@ class SudokuSolver(object):
         if self.try_solve():
             yield str(self)
             return
-        for i, raw in enumerate(self.sudoku_board):
-            for j, cell in enumerate(raw):
+        for i, row in enumerate(self.sudoku_board):
+            for j, cell in enumerate(row):
                 if cell:
                     continue
                 for option in self.sudoku_board.get_cell_options(i, j):
@@ -162,10 +162,10 @@ class SudokuSolver(object):
 
     def __str__(self):
         output = ''
-        for i, raw in enumerate(self.sudoku_board):
+        for i, row in enumerate(self.sudoku_board):
             for j in range(0, self.sudoku_board.size ** 2, self.sudoku_board.size):
                 output += ' '.join(
-                    cell or self.sudoku_board.option_fill for cell in raw[j:j + self.sudoku_board.size]
+                    cell or self.sudoku_board.option_fill for cell in row[j:j + self.sudoku_board.size]
                 )
                 output += self.sudoku_board.fill
             output += '\n'
