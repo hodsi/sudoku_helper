@@ -140,6 +140,7 @@ class SudokuSolver(object):
                             return True
                     except SudokuError:
                         pass
+            return False
         return False
 
     def get_solutions(self) -> Iterator[str]:

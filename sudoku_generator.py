@@ -25,6 +25,7 @@ class SudokuGenerator(SudokuSolver):
                             return True
                     except SudokuError:
                         pass
+                return False
         return False
 
     def remove_value_if_possible(self, key: Tuple[int, int]) -> bool:
